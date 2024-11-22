@@ -1,6 +1,8 @@
 video/
 audio/
 .venv/
+*.tsv
+*.mp4
 
 *.txt
 !requirements.txt

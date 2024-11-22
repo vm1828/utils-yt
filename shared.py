@@ -26,7 +26,7 @@ def retry(func):
                 success = True
             except Exception as e:
                 print(f'Failed: {e}. \nRetrying...')
-                time.sleep(0.5)
+                time.sleep(1)
                 continue
         return urls
     return wrapper
@@ -56,7 +56,7 @@ def download_video(url, filename):
         adaptive=True, file_extension='mp4', only_audio=True
     ).order_by('abr').desc().first().download(filename=tmp_audio_file)
 
-    output_file = os.path.join(VIDEO_DIR, filename)
+    output_file = os.path.join(VIDEO_DIR, filename.replace('/', '_or_'))
     cmd = f'ffmpeg -i {tmp_video_file} -i {tmp_audio_file} -c:v copy -c:a aac "{output_file}.mp4"'
     print(cmd)
     subprocess.call(cmd, shell=True)  
@@ -80,7 +80,7 @@ def get_playlist(url, include_titles=True):
     # playlist._video_regex = re.compile(r"\"url\":\"(/watch\?v=[\w-]*)")
     urls = [url for url in playlist.video_urls]
     if include_titles:
-        titles = [f'{i:03d} - {get_title(video)}' for i, video in enumerate(playlist.videos)]
+        titles = [f'{i:03d} - {get_title(video)}' for i, video in enumerate(playlist.videos, 1)]
     else:
         titles = [f'{i:03d} - {playlist.title}' for i in range(len(urls))]
     return zip(urls, titles)
@@ -88,13 +88,13 @@ def get_playlist(url, include_titles=True):
 @retry
 def get_channel(url, include_titles=True):
     c = Channel(url)
-    print(c.video_urls)
-    urls = [url for url in c.video_urls]
+    urls = [url.watch_url for url in reversed(c.video_urls)]
+    print('URLS:')
     print(urls)
     if include_titles:
-        titles = [get_title(video) for video in c.videos]
+        titles = [f'{i:03d} - {get_title(video)}' for i, video in enumerate(reversed(c.videos), 1)]
         return zip(urls, titles)
-    return urls
+    return zip(urls, titles)
 
 @retry
 def get_channel_url(video_url):

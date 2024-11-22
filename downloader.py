@@ -2,16 +2,17 @@ from shared import *
 import csv
 
 if __name__ == '__main__':
-    PLAYLIST = 'https://www.youtube.com/watch?v=WACSnwKby2Y&list=PL8dPuuaLjXtOhFQOVdutRTxvUI1UeCcax&pp=iAQB'
+    PLAYLIST = ''
     FILE = 'data/playlist.tsv'
-    VIDEO_URL = 'https://youtu.be/J4Wdy0Wc_xQ?list=PLblh5JKOoLUIE96dI3U7oxHaCAbZgfhHk'
-    CHANNEL = 'https://www.youtube.com/channel/UCtYLUTtgS3k1Fg4y5tAhLbw/videos'
+    VIDEO_URL = ''
+    CHANNEL = ''
 
     # # get channel url
     # print(get_channel_url(VIDEO_URL))
 
     # save data
-    data = get_playlist(PLAYLIST, include_titles=True)
+    # data = get_playlist(PLAYLIST, include_titles=True)
+    data = get_channel(CHANNEL, include_titles=True)
     with open(FILE, 'w') as f:
         for url, title in data:
             f.write(f'{url}\t{title}\n')
